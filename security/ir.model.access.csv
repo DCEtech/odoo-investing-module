@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_company_manager,access company manager,model_investing_company,investing.group_investing_manager,1,1,1,1
+access_portfolio_manager,access portfolio manager,model_investing_portfolio,investing.group_investing_manager,1,1,1,1
+access_price_history_manager,access price history manager,model_investing_price_history,investing.group_investing_manager,1,1,1,1
+access_company_user,access company user,model_investing_company,investing.group_investing_user,1,0,0,0
+access_portfolio_user,access portfolio user,model_investing_portfolio,investing.group_investing_user,1,0,0,0
+access_price_history_user,access price history user,model_investing_price_history,investing.group_investing_user,1,0,0,0
