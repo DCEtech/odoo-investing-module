@@ -24,6 +24,7 @@
                             <field name="company_id"/>
                             <field name="shares"/>
                             <field name="purchase_price"/>
+                            <field name='date'/>
                         </group>
                         <group string="Performance">
                             <field name="current_value"/>

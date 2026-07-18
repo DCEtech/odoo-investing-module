@@ -12,7 +12,8 @@
         "data/cron.xml",
         "views/company_views.xml", 
         "views/portfolio_views.xml", 
-        "views/price_history_views.xml", 
+        "views/price_history_views.xml",
+        "views/buy_sell_history_views.xml",
         "views/menus.xml"
         ],
     'installable': True,

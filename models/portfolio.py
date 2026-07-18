@@ -5,6 +5,7 @@ class Portfolio(models.Model):
     _description = 'Investing Portfolio'
     
     company_id = fields.Many2one('investing.company', string='Company', required=True)
+    date = fields.Datetime(string='date time', required=True)
     shares = fields.Float(string='Number of Shares')
     purchase_price = fields.Float(string='Purchase Price')
     current_value = fields.Float(string='Current Value', compute='_compute_current_value')
@@ -15,6 +16,18 @@ class Portfolio(models.Model):
     def create(self, vals_list):
         result = self.env['investing.portfolio']
         for vals in vals_list: 
+
+            new_buy = self.env['investing.buy.sell.history']
+    
+            new_buy.create([{
+                'company_id': vals.get('company_id'),
+                'date': vals.get('date'),
+                'order_type': 'buy',
+                'shares': vals.get('shares'),
+                'price': vals.get('purchase_price'),
+                'remaining_shares': vals.get('shares')
+            }])
+
             existing = self.search([('company_id', '=', vals.get('company_id'))], limit=1)
             if existing: 
                 new_shares = vals.get('shares', 0)
@@ -24,13 +37,61 @@ class Portfolio(models.Model):
                     (existing.shares * existing.purchase_price + new_shares * new_price) / total_shares
                     if total_shares else 0
                 ) 
-                existing.write({'shares': total_shares, 'purchase_price': avg_price})
+                existing.write({'shares': total_shares, 'purchase_price': avg_price, 'date': vals.get('date')})
                 result |= existing
             else: 
                 result |= super().create([vals])
+        
         return result
 
+    def sell(self, shares, price, date): 
+        self.ensure_one()
+        lots = self.env['investing.buy.sell.history'].search([
+            ('company_id', '=', self.company_id.id), 
+            ('order_type', '=', 'buy'), 
+            ('remaining_shares', '>', 0),
+            ], order='date asc')
+        
+        actual_shares = shares
+        
+        profit = 0 
 
+        for lot in lots:
+            consum = min(lot.remaining_shares, actual_shares)
+            profit += (price - lot.price) * consum 
+            lot.remaining_shares -= consum
+            actual_shares -= consum
+
+        self.env['investing.buy.sell.history'].create([
+            {'company_id': self.company_id.id,
+            'date': date,   
+            'order_type': 'sell',
+            'shares': shares,   
+            'price': price,
+            'realized_profit': profit
+            } ])
+
+        actual = self.env['investing.buy.sell.history'].search([
+            ('company_id', '=', self.company_id.id), 
+            ('order_type', '=', 'buy'),
+            ('remaining_shares', '>', 0)
+        ])
+          
+        sum = 0
+        actual_shares = 0 
+        
+        for i in actual:
+            actual_shares += i.remaining_shares 
+            sum += i.price * i.remaining_shares
+
+        avg = sum / actual_shares if actual_shares else 0
+
+        self.write({
+            'shares': self.shares - shares,
+            'purchase_price': avg,
+            'date': date
+            })
+         
     @api.depends('shares', 'company_id.current_price')
     def _compute_current_value(self):    
         for record in self:

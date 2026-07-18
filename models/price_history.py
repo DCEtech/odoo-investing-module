@@ -7,6 +7,6 @@ class PriceHistory(models.Model):
     
     company_id = fields.Many2one('investing.company', string='Company', required=True)
     date = fields.Date(string='Date', required=True)
-    close_price = fields.Float(string='Close Price')
+    close_price = fields.Float(string='Close Price', aggregator='avg')
     volume = fields.Float(string='Volume')
     
