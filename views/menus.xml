@@ -1,0 +1,27 @@
+<odoo>
+    <data>
+        <menuitem id="menu_investing_root" 
+                  name="Investing" 
+                  sequence="10"/>
+        <menuitem id="menu_investing_companies" 
+                  name="Companies" 
+                  parent="menu_investing_root"
+                  action="action_investing_company"
+                  sequence="1"/>
+        <menuitem id="menu_investing_portfolio" 
+                  name="Portfolio" 
+                  parent="menu_investing_root"
+                  action="action_investing_portfolio"
+                  sequence="2"/>
+        <menuitem id="menu_investing_price_history"
+                  name="Price History"
+                  parent="menu_investing_root"
+                  action="action_investing_price_history"
+                  sequence="3"/>
+        <menuitem id="menu_investing_buy_sell_history"
+                  name="Buy/Sell History"
+                  parent="menu_investing_root"
+                  action="action_investing_buy_sell_history"
+                  sequence="4"/>
+    </data>
+</odoo>
