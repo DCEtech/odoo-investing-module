@@ -14,7 +14,8 @@
         "views/portfolio_views.xml", 
         "views/price_history_views.xml",
         "views/buy_sell_history_views.xml",
-        "views/menus.xml"
+        "views/menus.xml",
+        "views/portfolio_sell_wizard.xml"
         ],
     'installable': True,
     'application': True,
