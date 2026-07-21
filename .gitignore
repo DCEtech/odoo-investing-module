@@ -19,3 +19,6 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+
+# Notas personales / documentación de aprendizaje (no forma parte del módulo)
+claude/

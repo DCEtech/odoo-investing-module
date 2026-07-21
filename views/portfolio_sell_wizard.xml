@@ -1,0 +1,22 @@
+<odoo>
+    <data> 
+        <record id="view_sell_wizard_form" model="ir.ui.view">
+            <field name="name">view_sell_wizard_form</field>
+            <field name="model">investing.portfolio.sell.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="portfolio_id" invisible="1"/>
+                        <field name="shares"/>
+                        <field name="price"/>
+                        <field name="date"/>
+                    </group>
+                    <footer>
+                        <button name="action_confirm_sell" type="object" string="Confirm Sell" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

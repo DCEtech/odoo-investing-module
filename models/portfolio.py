@@ -91,6 +91,16 @@ class Portfolio(models.Model):
             'purchase_price': avg,
             'date': date
             })
+
+    def action_open_sell_wizard(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'investing.portfolio.sell.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_portfolio_id': self.id} 
+        }
          
     @api.depends('shares', 'company_id.current_price')
     def _compute_current_value(self):    
@@ -108,3 +118,4 @@ class Portfolio(models.Model):
             cost = record.shares * record.purchase_price
             record.roi = (record.profit_loss / cost) * 100 if cost else 0.0
 
+    

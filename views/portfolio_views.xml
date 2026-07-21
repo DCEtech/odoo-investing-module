@@ -19,6 +19,9 @@
             <field name="model">investing.portfolio</field>
             <field name="arch" type="xml">
                 <form>
+                    <header>
+                        <button name="action_open_sell_wizard" type="object" string="Sell" class="btn-primary"/>
+                    </header>
                     <sheet>
                         <group string="Position">
                             <field name="company_id"/>
