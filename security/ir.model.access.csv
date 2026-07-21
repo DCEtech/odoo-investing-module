@@ -3,6 +3,7 @@ access_company_manager,access company manager,model_investing_company,investing.
 access_portfolio_manager,access portfolio manager,model_investing_portfolio,investing.group_investing_manager,1,1,1,1
 access_price_history_manager,access price history manager,model_investing_price_history,investing.group_investing_manager,1,1,1,1
 access_buy_sell_history_manager,access buy sell history manager,model_investing_buy_sell_history,investing.group_investing_manager,1,1,1,1
+access_portfolio_sell_wizard_manager,access portfolio sell wizard manager,model_investing_portfolio_sell_wizard,investing.group_investing_manager,1,1,1,1
 access_company_user,access company user,model_investing_company,investing.group_investing_user,1,0,0,0
 access_portfolio_user,access portfolio user,model_investing_portfolio,investing.group_investing_user,1,0,0,0
 access_price_history_user,access price history user,model_investing_price_history,investing.group_investing_user,1,0,0,0
