@@ -8,3 +8,11 @@ access_company_user,access company user,model_investing_company,investing.group_
 access_portfolio_user,access portfolio user,model_investing_portfolio,investing.group_investing_user,1,0,0,0
 access_price_history_user,access price history user,model_investing_price_history,investing.group_investing_user,1,0,0,0
 access_buy_sell_history_user,access buy sell history user,model_investing_buy_sell_history,investing.group_investing_user,1,0,0,0
+access_tax_scale_manager,access tax scale manager,model_investing_tax_scale,investing.group_investing_manager,1,1,1,1
+access_tax_scale_line_manager,access tax scale line manager,model_investing_tax_scale_line,investing.group_investing_manager,1,1,1,1
+access_tax_year_manager,access tax year manager,model_investing_tax_year,investing.group_investing_manager,1,1,1,1
+access_tax_year_line_manager,access tax year line manager,model_investing_tax_year_line,investing.group_investing_manager,1,1,1,1
+access_tax_scale_user,access tax scale user,model_investing_tax_scale,investing.group_investing_user,1,0,0,0
+access_tax_scale_line_user,access tax scale line user,model_investing_tax_scale_line,investing.group_investing_user,1,0,0,0
+access_tax_year_user,access tax year user,model_investing_tax_year,investing.group_investing_user,1,0,0,0
+access_tax_year_line_user,access tax year line user,model_investing_tax_year_line,investing.group_investing_user,1,0,0,0
