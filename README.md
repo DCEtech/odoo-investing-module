@@ -10,6 +10,9 @@ Custom Odoo 19 module for investment portfolio tracking with Yahoo Finance integ
 - **Price history** — full year of daily close price and volume fetched from Yahoo Finance on each sync
 - **Automated sync** — daily cron job keeps all company prices up to date
 - **Manual sync** — per-company Sync button and global Sync All action from the list view
+- **FIFO sales** — sales consume the oldest lots held at the sale date (art. 37.2 LIRPF); overselling is rejected
+- **Fiscal year tax estimate** — nets the year's gains and losses, applies the two-month rule, loss carryforward, the 25 % offset against other savings income and the configured tax scale (IRPF common territory or IRNR)
+- **Configurable tax scales** — rates per regime and fiscal year as data records (Investing > Configuration > Tax Scales)
 
 ## Models
 
@@ -18,6 +21,9 @@ Custom Odoo 19 module for investment portfolio tracking with Yahoo Finance integ
 | `investing.company` | Tracked asset with ticker, sector, currency and current price |
 | `investing.portfolio` | Position per asset with shares, purchase price and computed P&L |
 | `investing.price.history` | Daily OHLCV history populated automatically on sync |
+| `investing.buy.sell.history` | Buy lots (with remaining shares) and sales with realized profit |
+| `investing.tax.scale` | Tax brackets per regime and fiscal year |
+| `investing.tax.year` | Tax estimate of a fiscal year, with one line per sale |
 
 ## Requirements
 
@@ -38,6 +44,17 @@ pip install yfinance
 ```bash
 python odoo-bin -c odoo.conf --stop-after-init -d <your_db> --init investing
 ```
+
+## Tax estimate limitations
+
+The estimate is indicative and is **not tax advice**:
+
+- Fees and the conversion to EUR at each operation's exchange rate are not included yet.
+- The two-month rule is simplified (deferred loss proportional to homogeneous buys in the
+  window; deferred losses are not re-integrated automatically) and it does not
+  distinguish listed from unlisted securities.
+- Supported regimes: resident in the common territory (IRPF) and non resident without
+  permanent establishment (IRNR). Foral territories and companies are not supported.
 
 ## Security
 

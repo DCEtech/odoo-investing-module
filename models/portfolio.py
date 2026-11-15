@@ -1,4 +1,9 @@
-from odoo import models, fields, api
+from odoo import api, fields, models
+from odoo.exceptions import UserError
+from odoo.tools import float_compare, float_is_zero
+
+# Precision used to compare share quantities (supports fractional crypto units).
+QTY_DIGITS = 8
 
 class Portfolio(models.Model):
     _name = 'investing.portfolio'
@@ -44,53 +49,85 @@ class Portfolio(models.Model):
         
         return result
 
-    def sell(self, shares, price, date): 
+    def sell(self, shares: float, price: float, date) -> float:
+        """Sell ``shares`` consuming buy lots in FIFO order (art. 37.2 LIRPF).
+
+        Only lots acquired on or before ``date`` can be consumed, and the
+        sale is rejected if it exceeds the shares held at that date.
+
+        :return: realized profit of the sale.
+        """
         self.ensure_one()
-        lots = self.env['investing.buy.sell.history'].search([
-            ('company_id', '=', self.company_id.id), 
-            ('order_type', '=', 'buy'), 
-            ('remaining_shares', '>', 0),
-            ], order='date asc')
-        
-        actual_shares = shares
-        
-        profit = 0 
+        if float_compare(shares, 0.0, precision_digits=QTY_DIGITS) <= 0:
+            raise UserError(self.env._("The number of shares to sell must be positive."))
+        if price < 0:
+            raise UserError(self.env._("The sale price cannot be negative."))
+        History = self.env["investing.buy.sell.history"]
+        lots = History.search(
+            [
+                ("company_id", "=", self.company_id.id),
+                ("order_type", "=", "buy"),
+                ("remaining_shares", ">", 0),
+                ("date", "<=", date),
+            ],
+            order="date asc, id asc",  # deterministic tie-break for same-time buys
+        )
+        available = sum(lots.mapped("remaining_shares"))
+        if float_compare(shares, available, precision_digits=QTY_DIGITS) > 0:
+            raise UserError(
+                self.env._(
+                    "You cannot sell %(shares)s shares of %(asset)s: only %(available)s "
+                    "were held on that date.",
+                    shares=shares,
+                    asset=self.company_id.display_name,
+                    available=available,
+                )
+            )
 
+        pending = shares
+        profit = 0.0
         for lot in lots:
-            consum = min(lot.remaining_shares, actual_shares)
-            profit += (price - lot.price) * consum 
-            lot.remaining_shares -= consum
-            actual_shares -= consum
+            if float_is_zero(pending, precision_digits=QTY_DIGITS):
+                break
+            consumed = min(lot.remaining_shares, pending)
+            profit += (price - lot.price) * consumed
+            remaining = lot.remaining_shares - consumed
+            # Avoid "ghost" lots of 1e-15 shares caused by float arithmetic.
+            lot.remaining_shares = (
+                0.0 if float_is_zero(remaining, precision_digits=QTY_DIGITS) else remaining
+            )
+            pending -= consumed
 
-        self.env['investing.buy.sell.history'].create([
-            {'company_id': self.company_id.id,
-            'date': date,   
-            'order_type': 'sell',
-            'shares': shares,   
-            'price': price,
-            'realized_profit': profit
-            } ])
+        History.create(
+            [
+                {
+                    "company_id": self.company_id.id,
+                    "date": date,
+                    "order_type": "sell",
+                    "shares": shares,
+                    "price": price,
+                    "realized_profit": profit,
+                }
+            ]
+        )
 
-        actual = self.env['investing.buy.sell.history'].search([
-            ('company_id', '=', self.company_id.id), 
-            ('order_type', '=', 'buy'),
-            ('remaining_shares', '>', 0)
-        ])
-          
-        sum = 0
-        actual_shares = 0 
-        
-        for i in actual:
-            actual_shares += i.remaining_shares 
-            sum += i.price * i.remaining_shares
-
-        avg = sum / actual_shares if actual_shares else 0
-
-        self.write({
-            'shares': self.shares - shares,
-            'purchase_price': avg,
-            'date': date
-            })
+        open_lots = History.search(
+            [
+                ("company_id", "=", self.company_id.id),
+                ("order_type", "=", "buy"),
+                ("remaining_shares", ">", 0),
+            ]
+        )
+        held = sum(open_lots.mapped("remaining_shares"))
+        cost = sum(lot.price * lot.remaining_shares for lot in open_lots)
+        self.write(
+            {
+                "shares": held,
+                "purchase_price": cost / held if held else 0.0,
+                "date": date,
+            }
+        )
+        return profit
 
     def action_open_sell_wizard(self):
         self.ensure_one()

@@ -23,5 +23,22 @@
                   parent="menu_investing_root"
                   action="action_investing_buy_sell_history"
                   sequence="4"/>
+        <menuitem id="investing_menu_tax"
+                  name="Taxes"
+                  parent="menu_investing_root"
+                  sequence="5"/>
+        <menuitem id="investing_tax_year_menu"
+                  parent="investing_menu_tax"
+                  action="investing_tax_year_action"
+                  sequence="1"/>
+        <menuitem id="investing_menu_config"
+                  name="Configuration"
+                  parent="menu_investing_root"
+                  groups="investing.group_investing_manager"
+                  sequence="99"/>
+        <menuitem id="investing_tax_scale_menu"
+                  parent="investing_menu_config"
+                  action="investing_tax_scale_action"
+                  sequence="1"/>
     </data>
 </odoo>
