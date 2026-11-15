@@ -20,7 +20,7 @@
             <field name="arch" type="xml">
                 <form>
                     <header>
-                        <button name="action_open_sell_wizard" type="object" string="Sell" class="btn-primary"/>
+                        <button name="action_open_sell_wizard" type="object" string="Sell" class="btn-primary" invisible="no id"/>
                     </header>
                     <sheet>
                         <group string="Position">
@@ -38,7 +38,7 @@
                 </form>
             </field>
         </record>
-        <record id="action_investing_portfolio" model="ir.actions.act_window">
+        <record id="action_investing_portfolio" model="ir.actions.act_window" eval="False">
             <field name="name">Portfolio</field>
             <field name="res_model">investing.portfolio</field>
             <field name="view_mode">list,form</field>
