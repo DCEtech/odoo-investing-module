@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="investing_tax_year_view_list" model="ir.ui.view">
+        <field name="name">investing.tax.year.view.list</field>
+        <field name="model">investing.tax.year</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'draft'">
+                <field name="fiscal_year" />
+                <field name="regime" />
+                <field name="net_gain" sum="Total" />
+                <field name="tax_attributable" />
+                <field name="effective_rate" />
+                <field name="state" widget="badge" />
+            </list>
+        </field>
+    </record>
+
+    <record id="investing_tax_year_view_form" model="ir.ui.view">
+        <field name="name">investing.tax.year.view.form</field>
+        <field name="model">investing.tax.year</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_compute" type="object" string="Compute" class="btn-primary" />
+                    <button
+                        name="action_reset_draft"
+                        type="object"
+                        string="Reset to Draft"
+                        invisible="state == 'draft'"
+                    />
+                    <field name="state" widget="statusbar" />
+                </header>
+                <sheet>
+                    <div class="alert alert-info" role="alert">
+                        Indicative estimate, not tax advice. It does not include fees nor the
+                        conversion to EUR at each operation's exchange rate. Check it against
+                        your draft return (Renta Web / Modelo 210) or a tax advisor.
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="not has_foreign_currency">
+                        Some sold assets are quoted in a currency other than EUR: gains are shown
+                        in their original currency and the estimate is not reliable.
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" /></h1>
+                    </div>
+                    <group>
+                        <group string="Parameters">
+                            <field name="fiscal_year" readonly="state == 'computed'" />
+                            <field name="regime" readonly="state == 'computed'" />
+                            <field
+                                name="other_savings_income"
+                                invisible="regime != 'resident_common'"
+                                readonly="state == 'computed'"
+                            />
+                            <field
+                                name="loss_carryforward"
+                                invisible="regime != 'resident_common'"
+                                readonly="state == 'computed'"
+                            />
+                            <field
+                                name="nonresident_exempt"
+                                invisible="regime != 'non_resident'"
+                                readonly="state == 'computed'"
+                            />
+                        </group>
+                        <group string="Result" invisible="state == 'draft'">
+                            <field name="total_gains" />
+                            <field name="total_losses" />
+                            <field name="deferred_losses" />
+                            <field name="net_gain" />
+                            <field name="carryforward_used" invisible="regime != 'resident_common'" />
+                            <field name="rcm_offset_used" invisible="regime != 'resident_common'" />
+                            <field name="loss_to_carryforward" invisible="regime != 'resident_common'" />
+                            <field name="taxable_base" />
+                            <field name="tax_total" />
+                            <field name="tax_attributable" class="fw-bold" />
+                            <field name="effective_rate" />
+                            <field name="scale_id" />
+                            <field name="computed_on" />
+                            <field name="has_foreign_currency" invisible="1" />
+                        </group>
+                    </group>
+                    <notebook invisible="state == 'draft'">
+                        <page string="Sales" name="sales">
+                            <field name="line_ids">
+                                <list decoration-danger="computable_gain &lt; 0">
+                                    <field name="date" />
+                                    <field name="company_id" />
+                                    <field name="shares" />
+                                    <field name="price" />
+                                    <field name="gain" sum="Total" />
+                                    <field name="deferred_loss" sum="Total" />
+                                    <field name="computable_gain" sum="Total" />
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="investing_tax_year_action" model="ir.actions.act_window">
+        <field name="name">Fiscal Years</field>
+        <field name="res_model">investing.tax.year</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Estimate the tax due for a fiscal year</p>
+            <p>Create a fiscal year and press Compute: the sales of that year are netted
+                and the configured tax scale is applied.</p>
+        </field>
+    </record>
+
+    <record id="investing_tax_scale_view_list" model="ir.ui.view">
+        <field name="name">investing.tax.scale.view.list</field>
+        <field name="model">investing.tax.scale</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="fiscal_year" />
+                <field name="regime" />
+                <field name="legal_reference" />
+            </list>
+        </field>
+    </record>
+
+    <record id="investing_tax_scale_view_form" model="ir.ui.view">
+        <field name="name">investing.tax.scale.view.form</field>
+        <field name="model">investing.tax.scale</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="regime" />
+                        <field name="fiscal_year" />
+                        <field name="legal_reference" />
+                        <field name="active" invisible="1" />
+                    </group>
+                    <field name="line_ids">
+                        <list editable="bottom">
+                            <field name="lower_bound" />
+                            <field name="rate" />
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="investing_tax_scale_action" model="ir.actions.act_window">
+        <field name="name">Tax Scales</field>
+        <field name="res_model">investing.tax.scale</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Verified 2026-11-15 with the hacienda-inversiones skill. Review every fiscal year. -->
+<odoo noupdate="1">
+    <record id="tax_scale_resident_common_2024" model="investing.tax.scale">
+        <field name="regime">resident_common</field>
+        <field name="fiscal_year">2024</field>
+        <field name="legal_reference">arts. 66 y 76 LIRPF (Ley 31/2022)</field>
+        <field name="line_ids" eval="[
+            Command.create({'lower_bound': 0, 'rate': 19}),
+            Command.create({'lower_bound': 6000, 'rate': 21}),
+            Command.create({'lower_bound': 50000, 'rate': 23}),
+            Command.create({'lower_bound': 200000, 'rate': 27}),
+            Command.create({'lower_bound': 300000, 'rate': 28}),
+        ]" />
+    </record>
+    <record id="tax_scale_resident_common_2025" model="investing.tax.scale">
+        <field name="regime">resident_common</field>
+        <field name="fiscal_year">2025</field>
+        <field name="legal_reference">arts. 66 y 76 LIRPF (Ley 7/2024)</field>
+        <field name="line_ids" eval="[
+            Command.create({'lower_bound': 0, 'rate': 19}),
+            Command.create({'lower_bound': 6000, 'rate': 21}),
+            Command.create({'lower_bound': 50000, 'rate': 23}),
+            Command.create({'lower_bound': 200000, 'rate': 27}),
+            Command.create({'lower_bound': 300000, 'rate': 30}),
+        ]" />
+    </record>
+    <record id="tax_scale_resident_common_2026" model="investing.tax.scale">
+        <field name="regime">resident_common</field>
+        <field name="fiscal_year">2026</field>
+        <field name="legal_reference">arts. 66 y 76 LIRPF (Ley 7/2024)</field>
+        <field name="line_ids" eval="[
+            Command.create({'lower_bound': 0, 'rate': 19}),
+            Command.create({'lower_bound': 6000, 'rate': 21}),
+            Command.create({'lower_bound': 50000, 'rate': 23}),
+            Command.create({'lower_bound': 200000, 'rate': 27}),
+            Command.create({'lower_bound': 300000, 'rate': 30}),
+        ]" />
+    </record>
+    <record id="tax_scale_non_resident_2024" model="investing.tax.scale">
+        <field name="regime">non_resident</field>
+        <field name="fiscal_year">2024</field>
+        <field name="legal_reference">art. 25.1.f.3º TRLIRNR</field>
+        <field name="line_ids" eval="[
+            Command.create({'lower_bound': 0, 'rate': 19}),
+        ]" />
+    </record>
+    <record id="tax_scale_non_resident_2025" model="investing.tax.scale">
+        <field name="regime">non_resident</field>
+        <field name="fiscal_year">2025</field>
+        <field name="legal_reference">art. 25.1.f.3º TRLIRNR</field>
+        <field name="line_ids" eval="[
+            Command.create({'lower_bound': 0, 'rate': 19}),
+        ]" />
+    </record>
+    <record id="tax_scale_non_resident_2026" model="investing.tax.scale">
+        <field name="regime">non_resident</field>
+        <field name="fiscal_year">2026</field>
+        <field name="legal_reference">art. 25.1.f.3º TRLIRNR</field>
+        <field name="line_ids" eval="[
+            Command.create({'lower_bound': 0, 'rate': 19}),
+        ]" />
+    </record>
+</odoo>
